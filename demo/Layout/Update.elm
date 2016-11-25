@@ -4,7 +4,6 @@ import Layout.Messages exposing (..)
 import Layout.Models exposing (..)
 import Fields.Update
 import Fields.Messages as FieldsMessage
-import Helpers.ComponentCom exposing (..)
 import Mdl.Layout.Update as Layout
 import Mdl.Layout.Models as LayoutModel 
 

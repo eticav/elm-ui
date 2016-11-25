@@ -2,7 +2,6 @@ module Mdl.Layout.View exposing (..)
 
 import Helpers.HtmlNode as HtmlNode exposing (..)
 import Html exposing (label,input,div,text,Html,Attribute)
-import Helpers.ComponentCom exposing (..)
 import Mdl.Icon as Icon
 import Mdl.Layout.Models as Models exposing (Model, Mode(..))
 import Mdl.Layout.Message exposing (Message(..))

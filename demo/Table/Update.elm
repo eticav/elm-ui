@@ -2,8 +2,6 @@ module Table.Update exposing (..)
 
 import Table.Messages exposing (..)
 import Table.Models exposing (..)
-
-import Helpers.ComponentCom exposing (..)
 import Mdl.Table.Update as Table
 import Html
 

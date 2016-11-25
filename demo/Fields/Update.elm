@@ -3,7 +3,7 @@ module Fields.Update exposing (..)
 import Fields.Messages as Messages exposing (..)
 import Fields.Models as Models exposing (..)
 import Mdl.TextField.TextField as TextField exposing (..)
-import Helpers.ComponentCom exposing (..)
+import Helpers.Components exposing (..)
 
 update : Messages.Message -> Models.Model -> (Models.Model, Cmd Messages.Message)
 update msg model =

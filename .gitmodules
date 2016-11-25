@@ -1,0 +1,6 @@
+[submodule "elm-packages/elm-helpers-components"]
+	path = elm-packages/elm-helpers-components
+	url = https://github.com/powet/elm-helpers-components.git
+[submodule "elm-packages/elm-helpers-html"]
+	path = elm-packages/elm-helpers-html
+	url = https://github.com/powet/elm-helpers-html.git
