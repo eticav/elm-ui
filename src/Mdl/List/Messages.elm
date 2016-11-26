@@ -1,3 +1,4 @@
 module Mdl.List.Messages exposing (..)
 
-type Message = Message
+type Message data = Primary data
+                  | Secondary data

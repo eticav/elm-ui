@@ -109,11 +109,12 @@ subView  = contentView
 infoView : String->Models.Fields data->data->Html (Message data)
 infoView  = contentView
       
-primaryView : Classes->Primary data -> data -> Html (Message data)
+primaryView : Classes->Primary data->data->Html (Message data)
 primaryView classes primary data =
   let
     primarySpan body = Html.span
                   [ Attributes.classList [(classes.primary,True)]
+                  ,  Events.onClick (Messages.Primary data)
                   ]
                   body
   in
@@ -140,6 +141,7 @@ secondaryView classes secondary data =
   let
     secondarySpan body = Html.span
                   [ Attributes.classList [(classes.secondary,True)]
+                  , Events.onClick (Messages.Secondary data)
                   ]
                   body
   in
