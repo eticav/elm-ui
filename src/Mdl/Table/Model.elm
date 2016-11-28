@@ -3,6 +3,7 @@ module Mdl.Table.Model exposing (..)
 import Date exposing (Date)
 
 type alias Model data = { sortBy : List (ColumnOrder data)
+                        , current : Maybe data
                         }
                  
 type alias Column data = { name : String
@@ -42,4 +43,5 @@ isNumeric col =
         
 initialModel : Model data
 initialModel = { sortBy = []
+               , current = Nothing
                }

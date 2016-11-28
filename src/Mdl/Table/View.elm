@@ -103,7 +103,7 @@ view config list model =
               [Html.text col.name]       
 
     tr row = Html.tr
-             []
+             [Events.onClick (Current row)]
              (List.map (\column->td column row) config.columns)
              
     td column row =

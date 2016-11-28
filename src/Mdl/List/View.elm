@@ -114,7 +114,7 @@ primaryView classes primary data =
   let
     primarySpan body = Html.span
                   [ Attributes.classList [(classes.primary,True)]
-                  ,  Events.onClick (Messages.Primary data)
+                  , Events.onClick (Messages.Primary data)
                   ]
                   body
   in
