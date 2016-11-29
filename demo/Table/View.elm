@@ -19,10 +19,12 @@ view model =
                 , Table.Column "age" (Table.Integer (\x->x.age))
                 , Table.Column "adresse" (Table.AlphaNumeric .adresse)
                 ]
+             exact
              "mdl-data-table mdl-shadow--2dp"
              "mdl-data-table__cell--non-numeric"
              "mdl-data-table__header--sorted-ascending"
-             "mdl-data-table__header--sorted-descending" 
+             "mdl-data-table__header--sorted-descending"
+             "is-selected" 
   in
     div
       [ Helpers.HtmlNode.stylesheet mdl

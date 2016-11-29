@@ -12,10 +12,12 @@ import Date exposing (Date)
 import FunFolding
 
 type alias Config data = { columns : List (Column data)
+                         , exact : (data->data->Bool)
                          , tableCls : String
                          , nonNumericCls : String
                          , ascendinCls  : String
                          , descendingCls : String
+                         , isSelectedCls : String
                          }
 
 notOrder : Order->Order
@@ -66,6 +68,10 @@ find predicate list =
 view : Config data->List data->Model data-> Html (Message data)
 view config list model =
   let
+    exactCurrent = case model.current of
+                     Just current-> config.exact current
+                     Nothing ->(\x->False)
+                               
     sort = FunFolding.compareN (compareList model)
     sortedList = List.sortWith sort list
     
@@ -102,9 +108,13 @@ view config list model =
               ]
               [Html.text col.name]       
 
-    tr row = Html.tr
-             [Events.onClick (Current row)]
-             (List.map (\column->td column row) config.columns)
+    tr row = 
+      Html.tr
+            [Events.onClick (Current row)
+            , Attributes.classList [ (config.isSelectedCls, exactCurrent row)
+                                   ]
+            ]
+            (List.map (\column->td column row) config.columns)
              
     td column row =
       Html.td

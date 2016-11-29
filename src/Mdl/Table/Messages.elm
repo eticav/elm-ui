@@ -7,4 +7,3 @@ type Message data = Sort (Column data)
 
 type OutMessage data = OutCurrent data
                      | OutNothing
-
