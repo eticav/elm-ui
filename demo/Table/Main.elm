@@ -18,4 +18,4 @@ main =
     , update = Update.update
     , view = View.view
     , subscriptions = Subscriptions.subscriptions
-    }  
+    }
