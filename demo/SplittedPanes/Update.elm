@@ -6,11 +6,11 @@ import Mdl.SplittedPanes.Update as SplittedPanes
 import Html
 
 
-updatePrimary : PrimaryMessage -> PrimaryModel -> (PrimaryModel, Cmd PrimaryMessage)
+updatePrimary : PrimaryMessage->PrimaryModel->(PrimaryModel,Cmd PrimaryMessage)
 updatePrimary msg model =
   (model, Cmd.none)
 
-updateSecondary : SecondaryMessage -> SecondaryModel -> (SecondaryModel, Cmd SecondaryMessage)
+updateSecondary : SecondaryMessage->SecondaryModel->(SecondaryModel,Cmd SecondaryMessage)
 updateSecondary msg model =
   (model, Cmd.none)
 
@@ -23,5 +23,3 @@ update msg model =
                                    |> SplittedPanes.update spMsg model.splittedPanes
       in
         ({model|splittedPanes = updatedSplittedPanes}, (Cmd.map SplittedPanes cmd))
-
-
