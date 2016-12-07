@@ -29,27 +29,15 @@ view model =
            Html.map SplittedPanes (SplittedPanesView.view config
                                      (\x->Html.div
                                         []
-                                        [ Html.text "primary"
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]                                              
+                                        [ Html.text "header"
                                         ])
                                      (\x->Html.div
                                         []
                                         [ Html.text "primary"
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]
-                                        , Html.div [] [Html.text "space"]                                              
+                                        ])
+                                     (\x->Html.div
+                                        []
+                                        [ Html.text "secondary"
                                         ])
                                      model.splittedPanes)
           ]

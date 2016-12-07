@@ -17,12 +17,13 @@ type alias Config = { headerCls : String
                     }
 
 view : Config->
+       (headerModel->Html headerMsg)->
        (primaryModel->Html primaryMsg)->
        (secondaryModel->Html secondaryMsg)->
-       Model primaryModel secondaryModel -> Html (Message primaryMsg secondaryMsg)
-view config primaryView secondaryView model =
+       Model headerModel primaryModel secondaryModel -> Html (Message headerMsg primaryMsg secondaryMsg)
+view config headerView primaryView secondaryView model =
   container config model
-    [ header config model [Html.text "f"]
+    [ header config model [Html.map Header (headerView model.header)]
     , content config model
         [ pane config.primaryCls config model model.splitter.primaryRatio
             [ Html.map Primary (primaryView model.primary) ] 
@@ -32,7 +33,7 @@ view config primaryView secondaryView model =
         ]          
     ]
 
-container : Config->Model primaryModel secondaryModel->List (Html (Message primaryMsg secondaryMsg))->Html (Message primaryMsg secondaryMsg)
+container : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
 container config model =
   let
     commonStyles = [ ( "display", "flex" )
@@ -48,7 +49,7 @@ container config model =
   in
     Html.div [ Attributes.style styles ]
 
-header : Config->Model primaryModel secondaryModel->List (Html (Message primaryMsg secondaryMsg))->Html (Message primaryMsg secondaryMsg)
+header : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
 header config model =
   Html.div [ Attributes.style [ ("flex","1")
                               , ("-web-kit-flex","1")
@@ -56,7 +57,7 @@ header config model =
            , Attributes.class config.headerCls
            ]
 
-content : Config->Model primaryModel secondaryModel->List (Html (Message primaryMsg secondaryMsg))->Html (Message primaryMsg secondaryMsg)
+content : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
 content config model =
   let
     orientation = case model.orientation of
@@ -82,7 +83,7 @@ content config model =
               [ styles
               ]
   
-pane : String->Config->Model primaryModel secondaryModel->Int->List (Html (Message primaryMsg secondaryMsg))->Html (Message primaryMsg secondaryMsg)
+pane : String->Config->Model headerModel primaryModel secondaryModel->Int->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
 pane class config model ratio =
   let 
     styles = case model.orientation of
@@ -109,7 +110,7 @@ pane class config model ratio =
              , Attributes.class class
              ]
 
-splitter : Config->Model primaryModel secondaryModel->List (Html (Message primaryMsg secondaryMsg))-> Html (Message primaryMsg secondaryMsg)
+splitter : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))-> Html (Message headerMsg primaryMsg secondaryMsg)
 splitter config model =
   let
     size = (toString (2*config.splitterSize)) ++ "px"

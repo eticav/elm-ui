@@ -4,42 +4,46 @@ import Platform.Sub as Sub
 import Mdl.SplittedPanes.Messages exposing (Message(..))
 import Mdl.SplittedPanes.Models exposing (Model)
 
-type alias Subscription primaryMsg primaryModel secondaryMsg secondaryModel =
-  { primarySub : Maybe (primaryModel->Sub primaryMsg)
+type alias Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel =
+  { headerSub : Maybe (headerModel->Sub headerMsg)
+  , primarySub : Maybe (primaryModel->Sub primaryMsg)
   , secondarySub : Maybe (secondaryModel->Sub secondaryMsg)
   }
 
-{-| subscriber function
--}
-subscriber : Subscription primaryMsg primaryModel secondaryMsg secondaryModel
+subscriber : Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel
 subscriber =
-  { primarySub = Nothing
+  { headerSub = Nothing
+  , primarySub = Nothing
   , secondarySub = Nothing
   }
 
-{-| secondary function
--}
-secondary : (secondaryModel->Sub secondaryMsg)->
-         Subscription primaryMsg primaryModel secondaryMsg secondaryModel->
-         Subscription primaryMsg primaryModel secondaryMsg secondaryModel
-secondary secondarySub subscriber =
-  { subscriber| secondarySub = Just secondarySub}
+header : (headerModel->Sub headerMsg)->
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel->
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel
+header headerSub subscriber =
+  { subscriber| headerSub = Just headerSub}
 
-{-| primary function
--}
 primary : (primaryModel->Sub primaryMsg)->
-         Subscription primaryMsg primaryModel secondaryMsg secondaryModel->
-         Subscription primaryMsg primaryModel secondaryMsg secondaryModel
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel->
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel
 primary primarySub subscriber =
   { subscriber| primarySub = Just primarySub}
 
-{-| subscriptions function
--}
-subscriptions : Model primaryModel secondaryModel->
-                Subscription primaryMsg primaryModel secondaryMsg secondaryModel->
-                Sub (Message primaryMsg secondaryMsg)
+secondary : (secondaryModel->Sub secondaryMsg)->
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel->
+         Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel
+secondary secondarySub subscriber =
+  { subscriber| secondarySub = Just secondarySub}
+
+subscriptions : Model headerModel primaryModel secondaryModel->
+                Subscription headerMsg headerModel primaryMsg primaryModel secondaryMsg secondaryModel->
+                Sub (Message headerMsg primaryMsg secondaryMsg)
 subscriptions model subscription= 
   let
+    headerSub =
+      Maybe.map (\sub->Sub.map Header (sub model.header)) subscription.headerSub
+        |> Maybe.withDefault Sub.none
+           
     primarySub =
       Maybe.map (\sub->Sub.map Primary (sub model.primary)) subscription.primarySub
         |> Maybe.withDefault Sub.none
@@ -48,6 +52,7 @@ subscriptions model subscription=
       Maybe.map (\sub->Sub.map Secondary (sub model.secondary)) subscription.secondarySub
         |> Maybe.withDefault Sub.none                   
   in
-    Sub.batch [ secondarySub
+    Sub.batch [ headerSub
               , primarySub
+              , secondarySub
               ]
