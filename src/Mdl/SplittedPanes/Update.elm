@@ -5,88 +5,93 @@ import Mdl.SplittedPanes.Messages exposing (Message(..))
 
 import MouseEvents
 
-type alias Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg =
-  { primaryUpdate : (primaryMsg->primaryModel->(primaryModel,Cmd primaryMsg))
-  , secondaryUpdate : (secondaryMsg->secondaryModel->(secondaryModel,Cmd secondaryMsg))
-  , primaryToBus : Maybe (primaryMsg->busMsg)
-  , secondaryToBus : Maybe (secondaryMsg->busMsg)
+type alias Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg =
+  { primaryUpdate : (primaryMsg->primaryModel->(primaryModel,Cmd primaryMsg, primaryOutMsg))
+  , secondaryUpdate : (secondaryMsg->secondaryModel->(secondaryModel,Cmd secondaryMsg, secondaryOutMsg))
+  , primaryOutToBus : Maybe (primaryOutMsg->busMsg)
+  , secondaryOutToBus : Maybe (secondaryOutMsg->busMsg)
   , busToPrimary : Maybe (busMsg->Maybe primaryMsg)
   , busToSecondary : Maybe (busMsg->Maybe secondaryMsg)
+  , toOutMsg : Maybe busMsg->Maybe busMsg->outMsg
   }
 
-updater : (primaryMsg->primaryModel->(primaryModel,Cmd primaryMsg))->
-          (secondaryMsg->secondaryModel->(secondaryModel,Cmd secondaryMsg))->
-          Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg
-updater primaryUpdate secondaryUpdate = { primaryUpdate = primaryUpdate
-                                        , secondaryUpdate = secondaryUpdate
-                                        , primaryToBus = Nothing
-                                        , secondaryToBus = Nothing
-                                        , busToPrimary = Nothing
-                                        , busToSecondary = Nothing
-                                        }
+updater : (primaryMsg->primaryModel->(primaryModel,Cmd primaryMsg,primaryOutMsg))->
+          (secondaryMsg->secondaryModel->(secondaryModel,Cmd secondaryMsg,secondaryOutMsg))->
+          (Maybe busMsg->Maybe busMsg->outMsg)-> 
+          Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
+updater primaryUpdate secondaryUpdate toOutMsg = { primaryUpdate = primaryUpdate
+                                                 , secondaryUpdate = secondaryUpdate
+                                                 , primaryOutToBus = Nothing
+                                                 , secondaryOutToBus = Nothing
+                                                 , busToPrimary = Nothing
+                                                 , busToSecondary = Nothing
+                                                 , toOutMsg=toOutMsg
+                                                 }
 
 
-primaryToBus : (primaryMsg->busMsg)->
-               Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-               Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg
-primaryToBus f updater = 
-  {updater|primaryToBus=Just f}
+primaryOutToBus : (primaryOutMsg->busMsg)->
+                  Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                    Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
+primaryOutToBus f updater = 
+  {updater|primaryOutToBus=Just f}
 
-secondaryToBus : (secondaryMsg->busMsg)->
-                 Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-                   Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg
-secondaryToBus f updater = 
-  {updater|secondaryToBus=Just f}
+secondaryOutToBus : (secondaryOutMsg->busMsg)->
+                    Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                    Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
+secondaryOutToBus f updater = 
+  {updater|secondaryOutToBus=Just f}
 
 busToPrimary : (busMsg->Maybe primaryMsg)->
-                 Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-                 Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg
+                 Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                 Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
 busToPrimary f updater = 
   {updater|busToPrimary=Just f}
   
 busToSecondary : (busMsg->Maybe secondaryMsg)->
-                 Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-                 Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg
+                 Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                 Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
 busToSecondary f updater = 
   {updater|busToSecondary=Just f}
   
   
 update : Message primaryMsg secondaryMsg->
          Model primaryModel secondaryModel->
-         Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-         (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg))
+         Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+         (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg),outMsg)
 update msg model updater =
     (updateFromMsg model updater msg)
       |> updateFromBus msg updater
   
 updateFromMsg : Model primaryModel secondaryModel->
-                Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
+                Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
                 Message primaryMsg secondaryMsg->
-                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg))
+                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg), Maybe busMsg)
 updateFromMsg model updater msg  =
     case msg of
       Primary primaryMsg ->
         let
-          (updatePrimary,cmd) = updater.primaryUpdate primaryMsg model.primary
+          (updatePrimary, cmd, outMsg) = updater.primaryUpdate primaryMsg model.primary
+          toBusMsg outMsg = Maybe.map (\f-> f outMsg) updater.primaryOutToBus
         in
-          ({model|primary=updatePrimary}, Cmd.map Primary cmd)
+          ({model|primary=updatePrimary}, Cmd.map Primary cmd, toBusMsg outMsg)
       Secondary secondaryMsg ->
         let
-          (updateSecondary,cmd) = updater.secondaryUpdate secondaryMsg model.secondary
+          (updateSecondary,cmd, outMsg) = updater.secondaryUpdate secondaryMsg model.secondary
+          toBusMsg outMsg = Maybe.map (\f-> f outMsg) updater.secondaryOutToBus
         in
-          ({model|secondary=updateSecondary}, Cmd.map Secondary cmd)
+          ({model|secondary=updateSecondary}, Cmd.map Secondary cmd, toBusMsg outMsg)
       MouseDown me->
         let
           splitter = model.splitter
           updatedSplitter = {splitter|resizing=True}
         in
-          ({model|splitter = updatedSplitter}, Cmd.none)
+          ({model|splitter = updatedSplitter}, Cmd.none, Nothing)
       MouseUp me->
         let
           splitter = model.splitter
           updatedSplitter = {splitter|resizing=False}
         in
-          ({model|splitter = updatedSplitter}, Cmd.none)
+          ({model|splitter = updatedSplitter}, Cmd.none, Nothing)
       Move me->
         let
           splitter = model.splitter
@@ -106,36 +111,24 @@ updateFromMsg model updater msg  =
                                   {splitter|primaryRatio = primaryRatio 5 pos, secondaryRatio=secondaryRatio 5 pos parentSize}
                               (_,_)-> {splitter|resizing=False}
         in        
-          ({model|splitter=updatedSplitter}, Cmd.none)
-
-toBusMsg : Message primaryMsg secondaryMsg->
-           Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-           Maybe busMsg
-toBusMsg msg updater =
-  case msg of
-    Primary primaryMsg -> Maybe.map (\f-> f primaryMsg) updater.primaryToBus
-    Secondary secondaryMsg -> Maybe.map (\f-> f secondaryMsg) updater.secondaryToBus
-    _ -> Nothing
+          ({model|splitter=updatedSplitter}, Cmd.none, Nothing)
           
 updateFromBus :Message primaryMsg secondaryMsg->
-                Update primaryMsg primaryModel secondaryMsg secondaryModel busMsg->
-                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg))->
-                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg))
-updateFromBus msg updater (model, cmd) =
-  let             
-    updateBus model busMsg =
-      let        
-        (primaryUpdatedModel, primaryCmd) = maybeApply updater.busToPrimary busMsg
-                                            |> Maybe.map (\x->updateFromMsg model updater (Primary x))
-                                            |> Maybe.withDefault (model, Cmd.none)
+                Update primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg),Maybe busMsg)->
+                (Model primaryModel secondaryModel, Cmd (Message primaryMsg secondaryMsg), outMsg)
+updateFromBus msg updater (model, cmd, mBusMsg) =
+  let        
+    (primaryUpdatedModel, primaryCmd, primaryBusMsg) = maybeApply updater.busToPrimary mBusMsg
+                                                     |> Maybe.map (\x->updateFromMsg model updater (Primary x))
+                                                     |> Maybe.withDefault (model, Cmd.none, Nothing)
+                                         
+    (secondaryUpdatedModel, secondaryCmd, secondaryBusMsg) = maybeApply updater.busToSecondary mBusMsg
+                                                           |> Maybe.map (\x->updateFromMsg primaryUpdatedModel updater (Secondary x))
+                                                           |> Maybe.withDefault (primaryUpdatedModel, Cmd.none, Nothing)
 
-        (secondaryUpdatedModel, secondaryCmd) = maybeApply updater.busToSecondary busMsg
-                                            |> Maybe.map (\x->updateFromMsg primaryUpdatedModel updater (Secondary x))
-                                            |> Maybe.withDefault (primaryUpdatedModel, Cmd.none)
-      in
-        secondaryUpdatedModel ! [cmd, primaryCmd, secondaryCmd]
   in
-    updateBus model (toBusMsg msg updater)      
+    (secondaryUpdatedModel, Cmd.batch [cmd, primaryCmd, secondaryCmd], updater.toOutMsg primaryBusMsg secondaryBusMsg)
              
 maybeApply mf mx =
   case (mf, mx) of
