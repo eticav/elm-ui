@@ -4,7 +4,7 @@ import SplittedPanes.View as View
 import SplittedPanes.Update as Update
 import SplittedPanes.Models as Models exposing (Model)
 import SplittedPanes.Messages exposing (Message)
---import SplittedPanes.Subscriptions as Subscriptions 
+import SplittedPanes.Subscriptions as Subscriptions 
 
 import Html
 
@@ -17,7 +17,7 @@ main =
     { init = init
     , update = Update.update
     , view = View.view
-    , subscriptions = (\x->Sub.none)--Subscriptions.subscriptions
+    , subscriptions = Subscriptions.subscriptions
     }  
 
 
