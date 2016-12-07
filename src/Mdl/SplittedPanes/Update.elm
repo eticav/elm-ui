@@ -35,6 +35,12 @@ updater headerUpdate primaryUpdate secondaryUpdate toOutMsg = { headerUpdate = h
                                                               , toOutMsg=toOutMsg
                                                               }
 
+headerOutToBus : (headerOutMsg->busMsg)->
+                 Update headerMsg headerModel headerOutMsg primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
+                 Update headerMsg headerModel headerOutMsg primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
+headerOutToBus f updater = 
+  {updater|headerOutToBus=Just f}
+  
 primaryOutToBus : (primaryOutMsg->busMsg)->
                   Update headerMsg headerModel headerOutMsg primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg->
                     Update headerMsg headerModel headerOutMsg primaryMsg primaryModel primaryOutMsg secondaryMsg secondaryModel secondaryOutMsg busMsg outMsg
