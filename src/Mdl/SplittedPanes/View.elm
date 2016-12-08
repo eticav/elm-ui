@@ -51,10 +51,7 @@ container config model =
 
 header : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
 header config model =
-  Html.div [ Attributes.style [ ("flex","1")
-                              , ("-web-kit-flex","1")
-                              ]
-           , Attributes.class config.headerCls
+  Html.div [ Attributes.class config.headerCls
            ]
 
 content : Config->Model headerModel primaryModel secondaryModel->List (Html (Message headerMsg primaryMsg secondaryMsg))->Html (Message headerMsg primaryMsg secondaryMsg)
