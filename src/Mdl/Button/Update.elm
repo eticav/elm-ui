@@ -1,4 +1,4 @@
 module Mdl.Button.Update exposing (..)
 
-import Mdl.List.Model as Models
+import Mdl.Button.Model as Models
 
