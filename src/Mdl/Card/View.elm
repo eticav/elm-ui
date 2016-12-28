@@ -43,12 +43,13 @@ maybeDiv map attr view=
   Maybe.map (maybeDiv1 map attr ) view
   
 view : Config->
-       Maybe (data->Html (header))->
-       Maybe (data->Html (image))->
-       Maybe (data->Html (content))->
-       Maybe (data->Html (footer))->
-       Models.Model data->Html (Message header image content footer)
-view config headerView imageView contentView footerView  model =
+       Maybe (model->Html (header))->
+       Maybe (model->Html (image))->
+       Maybe (model->Html (content))->
+       Maybe (model->Html (footer))->
+       model->
+       Html (Message header image content footer)
+view config headerView imageView contentView footerView model =
   let
     { id, class,  classList} =
       Html.CssHelpers.withNamespace "powet"
@@ -67,7 +68,7 @@ view config headerView imageView contentView footerView  model =
   in
     case mCardNode of
       Just cardNode ->
-        cardNode model.data
+        cardNode model
       Nothing->
         Html.div
           []
