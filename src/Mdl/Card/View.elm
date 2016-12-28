@@ -52,15 +52,18 @@ view config headerView imageView contentView footerView  model =
   let
     { id, class,  classList} =
       Html.CssHelpers.withNamespace "powet"
-          
+
+    mImageView = case imageView of
+                   Nothing-> Just (\m->Html.div [] [])
+                   any->any
+    
     mCardNode = functionFilterFold
                (node Html.div [class [CardCss.Card]] [])
                  [ maybeDiv Header [class [CardCss.CardItem, CardCss.CardHeader]] headerView
                  , maybeDiv Image [class [CardCss.CardItem, CardCss.CardImage]] imageView
-                 , (Just (\_->Html.div [] [])) 
                  , maybeDiv Content [class [CardCss.CardItem, CardCss.CardContent]] contentView
                  , maybeDiv Footer [class [CardCss.CardItem, CardCss.CardFooter]] footerView                 
-                 ]    
+                 ]
   in
     case mCardNode of
       Just cardNode ->

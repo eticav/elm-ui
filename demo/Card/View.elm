@@ -17,9 +17,6 @@ viewImage : Person -> Html image
 viewImage model =
   Html.img
       [ Attribute.src "http://68.media.tumblr.com/tumblr_llfl0zHJoG1qho7cqo1_500.jpg"
-      -- , Attribute.style [("max-width","150px")
-      --                   ,("max-height","150px")
-      --                   ]
       ]
       [ ]
         
@@ -32,12 +29,12 @@ view model =
           [ ]
           [ CardView.stylesheet
           , Html.div
-              [  ]
+              [ ]
               [ Html.map Card (CardView.view config
-                                 (Just (\m->Html.text "Hello"))
-                                 (Just viewImage)                                 
-                                 (Just (\m->Html.text "Hello"))
-                                 (Just (\m->Html.text "Hello]"))
+                                 Nothing--(Just (\m->Html.text "Header"))
+                                 Nothing--(Just viewImage)                                 
+                                 (Just (\m->Html.text "Content"))
+                                 (Just (\m->Html.text "Footer"))
                                  model.card)
               ]
           ]

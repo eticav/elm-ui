@@ -13,6 +13,7 @@ type CssClasses
     | CardHeader
     | CardFooter
     | CardSplitter
+    | CardGrid
       
 type CssIds
     = Page
@@ -42,58 +43,62 @@ vendorsDisplayFlex =
   
 css =
   let
-    radiusSize = px 5
-    cardWidth = px 200
-    cardHeight = 302
+    radiusSize = px 2
+    cardWidth = 200
+    cardHeight = 200
     itemHeight = 40
     imageHeight = cardHeight-(itemHeight*3)
+    bgColor = (rgba 10 10 74 0.1)
+    splitterColor = (rgba 0 0 0 0.1)
   in
     (stylesheet << namespace "powet")
-      [ (.) Card
-          [ boxShadow5 (px 4) (px 4) (px 8) (px 1)(rgba 0 0 0 0.53)
+      
+      [ (.) CardGrid
+          [ vendorsDisplayFlex
+          , vendorsFlexDirection row
+          ]
+      , (.) Card
+          [ boxShadow5 (px 1) (px 1) (px 10) (px 1)(rgba 0 0 0 0.53)
           , color (rgb 74 74 74)
-          , width  cardWidth
+          , width  (px cardWidth)
           , height (px cardHeight)
-          , borderRadius (px 5)
+          , borderRadius (radiusSize)
           , vendorsDisplayFlex
           , vendorsFlexDirection column
-          , alignItems stretch            
+          , alignItems stretch
+          , flex (int 1)
           ]
       , (.) CardItem
-          [ position relative
-          , width  auto 
+          [ backgroundColor bgColor
+          , position relative
+          , width  auto
           , height auto
           , minHeight (px itemHeight)
+          , borderTop3 (px 1) solid splitterColor
           , firstOfType [ borderRadius4 radiusSize radiusSize (px 0) (px 0)
+                        , borderTop (px 0)
                         ]
           , lastOfType [ borderRadius4 (px 0) (px 0) radiusSize radiusSize
-                       ] 
+                       ]          
           ]             
       , (.) CardHeader
-          [ backgroundColor (rgb 30 10 30)
+          [ flex (int 0)                 
           ]
       , (.) CardContent
-          [ backgroundColor (rgb 10 10 74)
-          --, maxHeight (px 500)
+          [ flex (int 1)
           ]
       , (.) CardFooter
-          [ backgroundColor (rgb 30 10 30)
+          [ flex (int 0)
           ]
-      , (.) CardSplitter
-          [ backgroundColor (rgb 211 211 211)
-          , minHeight (px 10)
-          , width  auto 
-          ]        
       , (.) CardImage
-          [ backgroundColor (rgb 0 0 0 )
-          , minHeight (px imageHeight)
-          , maxHeight (px imageHeight)
+          [ minHeight (px imageHeight)
           , vendorsDisplayFlex
           , vendorsFlexDirection row
           , property "z-index" "-1"
           , property "align-items" "center"
           , property "justify-content" "center"
           , overflow hidden
+          , flex (int 1)
           , firstOfType [ children [ img [ borderRadius4 radiusSize radiusSize (px 0) (px 0)
                                          ]
                                    ]                    
@@ -104,7 +109,7 @@ css =
                        ]
           , children [ img [ width (pct 100)
                            , height (pct 100)
-                           , flex (int 1)
+              
                            ]
                      ]
           ]
