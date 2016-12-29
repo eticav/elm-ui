@@ -17,12 +17,6 @@ mdlCardConfig = { classes = Classes
 
 type  Classes = Classes
 
-stylesheet =
-  let 
-    {css, warnings} = Css.compile [CardCss.css]
-  in
-    Html.CssHelpers.style css
-
 node : (List (Attribute msg)->List (Html msg)->Html msg)->
               List (Attribute msg)->
               List (Attribute msg)->

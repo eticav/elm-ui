@@ -3,7 +3,8 @@ module Mdl.Card.Css exposing (..)
 import Css exposing (..)
 import Css.Elements exposing (body, li, img)
 import Css.Namespace exposing (namespace)
-
+import Html.CssHelpers
+import Html exposing (Html)
 
 type CssClasses
     = Card
@@ -40,8 +41,16 @@ vendorsDisplayFlex =
         , property "display" "-webkit-flex"
         , property "display" "-ms-flexbox"
         ]
-  
-css =
+
+compiledStylesheet : Html msg
+compiledStylesheet =
+  let 
+    {css, warnings} = Css.compile [cssDefinition]
+  in
+    Html.CssHelpers.style css
+
+cssDefinition : Stylesheet
+cssDefinition =
   let
     radiusSize = px 2
     cardWidth = 200
