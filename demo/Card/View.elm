@@ -7,7 +7,7 @@ import Html.Attributes as Attribute
 
 import Mdl.Card.Models as MdlCard
 import Mdl.Card.View as CardView
-import Mdl.Card.Css as CardCss
+
 
 import Helpers.HtmlNode
 import Css exposing (..)
@@ -28,7 +28,7 @@ view model =
   in
     Html.body
           [ ]
-          [ CardCss.compiledStylesheet
+          [ CardView.stylesheet
           , Html.div
               [ ]
               [ Html.map Card (CardView.view config

@@ -42,20 +42,14 @@ vendorsDisplayFlex =
         , property "display" "-ms-flexbox"
         ]
 
-compiledStylesheet : Html msg
-compiledStylesheet =
-  let 
-    {css, warnings} = Css.compile [cssDefinition]
-  in
-    Html.CssHelpers.style css
-
-cssDefinition : Stylesheet
-cssDefinition =
+css : Stylesheet
+css =
   let
     radiusSize = px 2
     cardWidth = 200
     cardHeight = 200
     itemHeight = 40
+    marginSize = px 10
     imageHeight = cardHeight-(itemHeight*3)
     bgColor = (rgba 10 10 74 0.1)
     splitterColor = (rgba 0 0 0 0.1)
@@ -70,12 +64,14 @@ cssDefinition =
           [ boxShadow5 (px 1) (px 1) (px 10) (px 1)(rgba 0 0 0 0.53)
           , color (rgb 74 74 74)
           , width  (px cardWidth)
+          , minWidth  (px cardWidth)
           , height (px cardHeight)
+          , margin marginSize
           , borderRadius (radiusSize)
           , vendorsDisplayFlex
           , vendorsFlexDirection column
           , alignItems stretch
-          , flex (int 1)
+          , flex (int 0)
           ]
       , (.) CardItem
           [ backgroundColor bgColor

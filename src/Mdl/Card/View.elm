@@ -31,7 +31,14 @@ maybeDiv1 map attr view =
     g model = Html.div attr [(Html.map map (view model))] 
   in
     g
-  
+
+stylesheet : Html msg
+stylesheet =
+  let 
+    {css, warnings} = Css.compile [CardCss.css]
+  in
+    Html.CssHelpers.style css
+    
 maybeDiv : (a -> msg)->List (Attribute msg)->Maybe (model->Html a)->Maybe (model->Html msg)
 maybeDiv map attr view=
   Maybe.map (maybeDiv1 map attr ) view
@@ -62,7 +69,17 @@ view config headerView imageView contentView footerView model =
   in
     case mCardNode of
       Just cardNode ->
-        cardNode model
+        Html.div []
+            [             
+             Html.div
+               [ class [CardCss.CardGrid]
+               ]
+               [ cardNode model
+               , cardNode model
+               , cardNode model
+               ]
+            , cardNode model
+            ]
       Nothing->
         Html.div
           []
