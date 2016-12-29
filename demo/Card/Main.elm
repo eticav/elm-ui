@@ -8,7 +8,7 @@ import Card.Subscriptions as Subscriptions
 
 import Html
 
-init : (Model, Cmd (Message header image content footer))
+init : (Model, Cmd (Message header image footer))
 init =
   (Models.initialModel, Cmd.none)
     

@@ -1,8 +1,6 @@
 module Card.Models exposing (..)
 
-import Mdl.Card.Models as MdlCard
-
-type alias Model = { card : MdlCard.Model Person                  
+type alias Model = { card : Person                  
                    }
 
 type alias Person = { id : Int
@@ -12,6 +10,5 @@ type alias Person = { id : Int
                     }
 
 initialModel : Model
-initialModel = { card = MdlCard.initialModel
-                          (Person 1 "Etienne" 44 "La chauveliere")
+initialModel = { card = (Person 1 "Etienne" 44 "La chauveliere")
                }

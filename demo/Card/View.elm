@@ -4,6 +4,7 @@ import Card.Models exposing (..)
 import Card.Messages exposing (..)
 import Html exposing (Html)
 import Html.Attributes as Attribute
+import Html.Events as Events
 
 import Mdl.Card.Models as MdlCard
 import Mdl.Card.View as CardView
@@ -21,7 +22,7 @@ viewImage model =
       ]
       [ ]
         
-view : Model->Html (Message header image content footer)
+view : Model->Html (Message header image footer)
 view model =
   let    
     config = CardView.mdlCardConfig            
@@ -34,8 +35,17 @@ view model =
               [ Html.map Card (CardView.view config
                                  Nothing--(Just (\m->Html.text "Header"))
                                  Nothing--(Just viewImage)                                 
-                                 (Just (\m->Html.text "Content"))
+                                 (Just viewContent)
                                  (Just (\m->Html.text "Footer"))
                                  model.card)
               ]
           ]
+
+viewContent : Person->Html ContentMessage
+viewContent person =
+  Html.div
+    [ Events.onClick (ContentClick "hello") ]
+    [ Html.text (toString person) ]
+
+  
+    
