@@ -69,17 +69,7 @@ view config headerView imageView contentView footerView model =
   in
     case mCardNode of
       Just cardNode ->
-        Html.div []
-            [             
-             Html.div
-               [ class [CardCss.CardGrid]
-               ]
-               [ cardNode model
-               , cardNode model
-               , cardNode model
-               ]
-            , cardNode model
-            ]
+        cardNode model            
       Nothing->
         Html.div
           []
